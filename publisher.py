@@ -5,12 +5,18 @@ import asyncio
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
+import httpx
 from telegram import Bot
 from telegram.request import HTTPXRequest
 from telegram.error import NetworkError
 
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
-import httpx
+CHANNEL = "@Ebaa_q"
+
+BASE_DIR = Path(__file__).resolve().parent
+POSTS_FILE = BASE_DIR / "posts.json"
+POSTED_FILE = BASE_DIR / "posted.json"
+
 
 def test_connection():
     try:
@@ -21,11 +27,6 @@ def test_connection():
         print("Telegram connection status:", response.status_code)
     except Exception as error:
         print("Telegram connection failed:", repr(error))
-CHANNEL = "@Ebaa_q"
-
-BASE_DIR = Path(__file__).resolve().parent
-POSTS_FILE = BASE_DIR / "posts.json"
-POSTS_FILE = BASE_DIR / "posts.json"
 
 
 async def main():
@@ -42,29 +43,22 @@ async def main():
 
     day_index = now.date().toordinal() % 7
     post_index = day_index * 10 + slot
+
     if POSTED_FILE.exists():
-    with open(POSTED_FILE, "r", encoding="utf-8") as file:
-        posted_data = json.load(file)
-else:
-    posted_data = {"posted": []}
+        with open(POSTED_FILE, "r", encoding="utf-8") as file:
+            posted_data = json.load(file)
+    else:
+        posted_data = {"posted": []}
 
-post_key = f"{now.date().isoformat()}-{slot}"
+    post_key = f"{now.date().isoformat()}-{slot}"
 
-if POSTED_FILE.exists():
-    with open(POSTED_FILE, "r", encoding="utf-8") as file:
-        posted_data = json.load(file)
-else:
-    posted_data = {"posted": []}
-
-post_key = f"{now.date().isoformat()}-{slot}"
-
-if post_key in posted_data["posted"]:
-    print("تم نشر منشور هذا الموعد مسبقاً.")
-    return
+    if post_key in posted_data["posted"]:
+        print("تم نشر منشور هذا الموعد مسبقاً.")
+        return
 
     post = posts[post_index]
+
     test_connection()
- 
 
     for attempt in range(1, 4):
         try:
@@ -85,10 +79,16 @@ if post_key in posted_data["posted"]:
                     write_timeout=60,
                     pool_timeout=30
                 )
-                                posted_data["posted"].append(post_key)
 
-                with open(POSTED_FILE, "w", encoding="utf-8") as file:
-                    json.dump(posted_data, file, ensure_ascii=False, indent=2)
+            posted_data["posted"].append(post_key)
+
+            with open(POSTED_FILE, "w", encoding="utf-8") as file:
+                json.dump(
+                    posted_data,
+                    file,
+                    ensure_ascii=False,
+                    indent=2
+                )
 
             print("تم النشر بنجاح!")
             print("التصنيف:", post["category"])
