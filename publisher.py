@@ -25,6 +25,7 @@ CHANNEL = "@Ebaa_q"
 
 BASE_DIR = Path(__file__).resolve().parent
 POSTS_FILE = BASE_DIR / "posts.json"
+POSTS_FILE = BASE_DIR / "posts.json"
 
 
 async def main():
