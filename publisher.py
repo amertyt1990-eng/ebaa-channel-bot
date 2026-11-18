@@ -10,6 +10,17 @@ from telegram.request import HTTPXRequest
 from telegram.error import NetworkError
 
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+import httpx
+
+def test_connection():
+    try:
+        response = httpx.get(
+            "https://api.telegram.org",
+            timeout=30
+        )
+        print("Telegram connection status:", response.status_code)
+    except Exception as error:
+        print("Telegram connection failed:", repr(error))
 CHANNEL = "@Ebaa_q"
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -32,6 +43,8 @@ async def main():
     post_index = day_index * 10 + slot
 
     post = posts[post_index]
+    test_connection()
+ 
 
     for attempt in range(1, 4):
         try:
