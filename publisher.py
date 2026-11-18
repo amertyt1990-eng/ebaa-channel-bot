@@ -42,6 +42,17 @@ async def main():
 
     day_index = now.date().toordinal() % 7
     post_index = day_index * 10 + slot
+    if POSTED_FILE.exists():
+    with open(POSTED_FILE, "r", encoding="utf-8") as file:
+        posted_data = json.load(file)
+else:
+    posted_data = {"posted": []}
+
+post_key = f"{now.date().isoformat()}-{slot}"
+
+if post_key in posted_data["posted"]:
+    print("تم نشر منشور هذا الموعد مسبقاً.")
+    return
 
     post = posts[post_index]
     test_connection()
