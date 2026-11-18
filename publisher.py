@@ -77,6 +77,10 @@ if post_key in posted_data["posted"]:
                     write_timeout=60,
                     pool_timeout=30
                 )
+                                posted_data["posted"].append(post_key)
+
+                with open(POSTED_FILE, "w", encoding="utf-8") as file:
+                    json.dump(posted_data, file, ensure_ascii=False, indent=2)
 
             print("تم النشر بنجاح!")
             print("التصنيف:", post["category"])
