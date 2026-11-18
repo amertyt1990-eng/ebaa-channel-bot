@@ -5,7 +5,7 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from telegram import Bot
 
-TOKEN = os.environ["9180127574:AAGsQBLCcB8O7YqC3AI4OJhInGZi0cy1Cr8"]
+TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 CHANNEL = "@Ebaa_q"
 
 BASE_DIR = Path(__file__).resolve().parent
